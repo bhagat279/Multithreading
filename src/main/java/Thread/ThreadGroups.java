@@ -1,7 +1,5 @@
 package Thread;
 
-import java.util.TreeMap;
-
 class MyThreads extends Thread
 {
   MyThreads(ThreadGroup g, String name)
