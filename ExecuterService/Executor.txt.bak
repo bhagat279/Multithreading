@@ -1,0 +1,216 @@
+==================================================Basic Questions=========================================
+What is the Executor framework in Java?
+
+The Executor framework in Java provides a higher-level replacement for managing and controlling thread 
+execution. It decouples the task submission from the mechanics of how each task will be executed, 
+including the details of thread use, scheduling, etc. It helps in managing thread pools and concurrent 
+execution efficiently.
+
+What are the main components of the Executor framework?
+The main components are:
+
+
+Executor: Provides a simple interface for submitting tasks.
+
+ExecutorService: Extends Executor and adds methods for managing the lifecycle of tasks (e.g., shutdown, 
+task submission with Future).
+
+ScheduledExecutorService: Extends ExecutorService for scheduling tasks at fixed-rate or with fixed-delay.
+
+ThreadPoolExecutor: A highly configurable implementation of ExecutorService using a pool of worker 
+threads.
+
+ForkJoinPool: Designed for parallel tasks and divide-and-conquer algorithms.
+
+What is the difference between Executor and ExecutorService?
+
+Executor is a simple interface with a single method execute(Runnable command) for task submission. 
+ExecutorService extends Executor and provides additional methods for managing and controlling the 
+lifecycle of tasks, such as submit(), shutdown(), shutdownNow(), and managing the completion of tasks.
+
+What is the difference between ExecutorService.submit() and ExecutorService.execute()?
+
+execute(): Submits a task for execution, but doesn't return any result or exception. It is used for 
+Runnable tasks.
+
+submit(): Submits a task and returns a Future object that allows retrieving the result of the task and 
+handling any exceptions thrown during execution. It can accept both Runnable and Callable tasks.
+
+What is the Future interface in Java, and how is it used with ExecutorService?
+
+Future represents the result of an asynchronous computation. It provides methods like get(), cancel(), 
+and isDone() to manage and retrieve the result of a task executed via ExecutorService. You can submit 
+tasks using submit() and then retrieve the result with Future.get().
+
+Explain the difference between Callable and Runnable.
+
+Runnable: Represents a task that can be executed but does not return a result and cannot throw a checked 
+exception.
+
+Callable: Similar to Runnable, but it returns a result and can throw a checked exception. Callable is 
+used when you need the task to return a result, and you use ExecutorService.submit() to execute it.
+
+What is the purpose of the shutdown() and shutdownNow() methods in ExecutorService?
+
+shutdown(): Initiates an orderly shutdown in which previously submitted tasks are executed, but no new 
+tasks will be accepted.
+
+shutdownNow(): Attempts to stop all actively executing tasks and halts the processing of waiting tasks. 
+It returns a list of the tasks that were waiting to be executed.
+
+What is the role of the ThreadPoolExecutor class?
+
+ThreadPoolExecutor is the most flexible and powerful implementation of ExecutorService. It manages a pool 
+of worker threads and supports various task queue types, core and maximum pool sizes, and custom thread 
+factory or rejection handlers. It allows you to fine-tune thread pool behavior for different use cases.
+
+What is a BlockingQueue, and how is it used in ExecutorService?
+
+BlockingQueue is a queue that supports operations such as take(), put(), offer(), and poll() that can 
+block until an element becomes available or space is freed. In ExecutorService, BlockingQueue is used to 
+hold tasks before they are executed. In ThreadPoolExecutor, it is used as a task queue for managing task 
+submissions.
+
+What is the ScheduledExecutorService, and how does it differ from a regular ExecutorService?
+
+ScheduledExecutorService is a subclass of ExecutorService that supports scheduling tasks to run at 
+fixed-rate or after a delay. It allows tasks to be executed periodically or with a fixed delay, unlike 
+ExecutorService, which only handles immediate task execution.
+
+===========================================Intermediate Questions=========================================
+How can we handle timeouts when using ExecutorService?
+
+You can handle timeouts by using the Future.get(long timeout, TimeUnit unit) method, which blocks until 
+the task completes or the timeout expires. If the task takes too long, a TimeoutException is thrown.
+
+Explain the different factory methods provided by the Executors class.
+
+newFixedThreadPool(int nThreads): Creates a thread pool with a fixed number of threads.
+
+newCachedThreadPool(): Creates a thread pool that creates new threads as needed, but reuses previously 
+constructed threads when available.
+
+newSingleThreadExecutor(): Creates a thread pool with a single worker thread to execute tasks 
+sequentially.
+
+newScheduledThreadPool(int corePoolSize): Creates a thread pool with scheduled task support.
+
+What is the difference between newFixedThreadPool() and newCachedThreadPool()?
+
+newFixedThreadPool(): Creates a pool with a fixed number of threads that are reused for tasks.
+
+newCachedThreadPool(): Creates a pool that can dynamically increase and decrease in size based on the 
+number of tasks. It creates new threads when needed but reuses idle threads.
+
+What is the role of invokeAll() and invokeAny() methods in ExecutorService?
+
+invokeAll(): Executes a collection of Callable tasks and returns a list of Future objects, blocking until 
+all tasks are completed.
+
+invokeAny(): Executes a collection of Callable tasks and returns the result of the first successfully 
+completed task. It cancels all other tasks once one completes.
+
+How would you handle a task that can be cancelled in the middle of its execution using ExecutorService?
+
+You can cancel a task using the Future.cancel(true) method, which attempts to stop the task. If the task 
+supports interruption, it can be cancelled by throwing an InterruptedException.
+
+What are the advantages of using ExecutorService over manually creating and managing threads?
+
+ExecutorService abstracts away the complexity of thread management, such as creating and destroying 
+threads, scheduling tasks, handling thread reuse, and ensuring proper resource management. It simplifies 
+concurrency and improves performance by using thread pools.
+
+How do you get the result of an asynchronous task submitted to an ExecutorService?
+
+You get the result by submitting the task using submit() and obtaining a Future object. Then, you call 
+Future.get() to retrieve the result once the task is completed.
+
+What is the use of the ExecutorCompletionService?
+
+ExecutorCompletionService is a wrapper around ExecutorService that allows tasks to be processed as they 
+complete. It provides a take() method that blocks until the next completed task is available, making it 
+easier to handle the results of multiple concurrent tasks.
+
+What are FixedThreadPool, CachedThreadPool, and SingleThreadExecutor used for in the ExecutorService?
+
+FixedThreadPool: Used when a fixed number of threads are required for a set of tasks, ensuring the system 
+doesn't run out of threads.
+
+CachedThreadPool: Suitable for short-lived, many tasks that require flexibility in the number of threads.
+
+SingleThreadExecutor: Used when tasks need to be executed sequentially by a single worker thread.
+
+How can you gracefully shut down an ExecutorService while waiting for the completion of all tasks?
+
+You can use executor.shutdown() to stop accepting new tasks and wait for existing tasks to finish. If 
+needed, use executor.awaitTermination(timeout, unit) to wait for termination with a timeout.
+
+====================================Advanced Questions====================================================
+1. What is the difference between ThreadPoolExecutor and ScheduledThreadPoolExecutor?
+==> ThreadPoolExecutor:
+       1. corePoolSize: means number of threads that will always alive in thread
+     	  pool even if they are not doing any task. when task will avialable then they will
+		  start working.
+		  
+	   2. maximumPoolSize: Thread Pool can increase max number of thread to execute the task
+          if task is increases.
+		  
+       3. keepAliveTime: If any thread not executing any task they will terminate after
+          spcecified time.
+       4. new ArrayBlockingQueue<>(2): They can hold spcecified task in queue,and wait for 
+	      thread to execute.
+     	  
+	   5. new ThreadPoolExecutor.AbortPolicy(): It wil thorw exeption if queue is full.
+	      "RejectedExecutionException"
+   	   
+	 
+==>ScheduledThreadPoolExecutor:
+    It is used to execute task at fixed time/rate
+    scheduler.scheduleAtFixedRate(task, 0, 50, TimeUnit.SECONDS);	
+	   
+	  
+
+2.Can ExecutorService handle tasks that execute periodically or after a delay? How?
+
+==> Yes, using ScheduledExecutorService. It provides methods like scheduleAtFixedRate() and 
+    scheduleWithFixedDelay() to execute tasks periodically or after a delay.
+
+3. What happens if a task submitted to an ExecutorService throws an exception? How can you handle this 
+   scenario?
+==>If a task throws an exception, it can be handled via the Future.get() method, which will throw an 
+   ExecutionException.
+
+4.Explain the work-stealing algorithm used in ForkJoinPool.
+
+==>The work-stealing algorithm allows idle threads to "steal" tasks from busy threads. This helps balance 
+the workload and ensures that all threads remain productive.
+
+5.How does the ThreadPoolExecutor handle a situation where all threads are busy, and there is an additional 
+task in the queue?
+
+==>If all threads are busy, ThreadPoolExecutor will either add the task to the queue or create new threads 
+(if the maximum thread pool size allows), depending on the queue and configuration.
+
+6.What is the RejectedExecutionHandler interface, and how does it work?
+
+==>The RejectedExecutionHandler interface defines how rejected tasks should be handled. It provides the 
+rejectedExecution(Runnable r, ThreadPoolExecutor executor) method,
+   If maximumPoolSize is reached/ task is more than queue size then using abortPolicy()
+   "RejectedExecutionHandler" will throw.
+
+How can you control the size of a thread pool at runtime using ThreadPoolExecutor?
+
+You can adjust the core and maximum pool sizes using setCorePoolSize() and setMaximumPoolSize() methods. 
+This allows you to dynamically change the thread pool size.
+
+How would you handle InterruptedException while working with an ExecutorService?
+
+You can handle InterruptedException by checking if the task is interrupted and then properly handling the 
+interruption by either propagating it or terminating the task.
+
+What is Executors.newSingleThreadExecutor(), and when would you use it?
+
+Executors.newSingleThreadExecutor() creates a thread pool with a single worker thread. It is useful when 
+you need to process tasks sequentially and ensure that no tasks are executed concurrently (e.g., logging, 
+event processing).
